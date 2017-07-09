@@ -1,0 +1,19 @@
+Kubernetes:
+                files     comment     LOC       LOC/file
+                8294      359224      2000584   ~241
+
+Consul:
+                files     comment     LOC       LOC/file
+                1369      104196      377707    ~275
+
+etcd:
+                files     comment     LOC       LOC/file
+                1308      49386       352923    ~269
+
+CockroachDB:
+                files     comment     LOC       LOC/file
+                999       64332       323548    ~323
+
+Minio:
+                files     comment     LOC       LOC/file
+                1141      55834       273711    ~239

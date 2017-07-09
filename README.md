@@ -1,2 +1,3 @@
-# fallacies-of-distributed-gomputing
-The Fallacies Of Distributed Gomputing—talk at GopherCon 2017
+# The Fallacies Of Distributed Gomputing
+
+A talk at GopherCon 2017, see https://www.gophercon.com/speakers/17 for details.

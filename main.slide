@@ -1,0 +1,318 @@
+The Fallacies Of Distributed Gomputing
+http://301.sh/2017-gomputing
+14:55 14 Jul 2017
+Tags: Go, distributed systems
+
+Michael Hausenblas
+Developer Advocate, Red Hat
+http://mhausenblas.info
+@mhausenblas
+
+* Agenda
+
+- Scope
+- Overview
+- Case studies
+- Conclusions
+
+: The topic of this talk is learning how to do distributed systems in Go.
+: For this, we'll have a look at several case studies, distributed systems written in Go.
+: It's really more an archeological or forensics-related talk than a visionary one ;)
+
+* Scope
+
+: Before we jump in let's define what is and what is not in scope.
+
+* In scope for this talk
+
+Go programs …
+
+- running on two or more machines (VMs, containers, etc.)
+- using `net/*`
+- that need to coordinate their efforts to achieve a result
+- with centralized or decentralized control
+
+In short *distributed* *systems* at large …
+
+* In scope for this talk
+
+.image images/types-of-network.png 500 _
+
+Source: [[https://blog.maidsafe.net/2015/12/04/evolving-terminology/][blog.maidsafe.net/2015/12/04/evolving-terminology/]]
+
+* Out of scope for this talk
+
+- [[https://tour.golang.org/concurrency/1][Go routines]]
+- [[https://tour.golang.org/concurrency/2][Channels]]
+- [[https://golang.org/pkg/sync/#WaitGroup][sync.WaitGroup]]
+- [[https://golang.org/pkg/sync/#Mutex][sync.Mutex]]
+- [[https://golang.org/pkg/sync/#Pool][sync.Pool]]
+- any other local (single-machine) mechanism
+
+* Out of scope for this talk
+
+If you want to learn everything about Go routines, channels, and `sync.*` please
+do check out Katherine Cox-Buday's wonderful [[http://shop.oreilly.com/product/0636920046189.do][Concurrency in Go]].
+She's got you covered ;)
+
+.image images/concurrency-in-go-book.gif
+
+* Overview
+
+* Overview
+
+- fallacies of distributed computing
+- relevant parts of stdlib
+- useful libraries beyond stdlib
+
+* Fallacies of distributed computing
+
+In a nutshell:
+
+.image images/no-way-its-dns.jpg _ 600
+
+* Fallacies of distributed computing
+
+1. The network is reliable.
+2. Latency is zero.
+3. Bandwidth is infinite.
+4. The network is secure.
+5. Topology doesn't change.
+6. There is one administrator.
+7. Transport cost is zero.
+8. The network is homogeneous.
+
+Source: Peter Deutsch (1994), see [[https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing][Wikipedia]]
+
+* Fallacies of distributed computing
+
+1. The network is reliable ↦ _timeouts_, _error_ _handling_, _retry_ _logic_
+2. Latency is zero ↦ _cancelation_, _partial_ _results_
+3. Bandwidth is infinite ↦ _CDNs_, _protobuf_  _rather_ _than_ _JSON_
+4. The network is secure ↦ _SSL/TLS_, _digital_ _signatures_, _checksums_
+5. Topology doesn't change ↦ _DNS_ _vs._ _IP_ _addresses_, _TTL_
+6. There is one administrator ↦ _immutablility_, _auditing_, _role-based_ _access_
+7. Transport cost is zero ↦ _cost_ _of_ _(un)marshalling_
+8. The network is homogeneous ↦ _i14y_ _on_ _all_ _levels_
+
+* Fallacies of distributed computing
+
+.image images/kalashnikitty.jpg _ 400
+
+_Just_ _a_ _friendly_ _word_ _of_ _warning:_
+
+  If you think now `ah, that's cute but it won't happen to me` … do not underestimate the
+  fallacies, otherwise they *will* come back and bite you. Hard.
+
+* What does the stdlib offer?
+
+- [[https://golang.org/pkg/net/][net/*]]
+- [[https://golang.org/pkg/encoding][encoding/*]]
+- [[https://golang.org/pkg/context/][context]]
+- [[https://golang.org/pkg/time/][time]]
+
+
+* Useful packages beyond stdlib I
+
+modern RPC:
+.link http://grpc.io/ gRPC
+
+a powerful URL router and dispatcher:
+.link https://github.com/gorilla/mux gorilla/mux
+
+SSH client and server:
+.link https://godoc.org/golang.org/x/crypto/ssh golang.org/x/crypto/ssh
+
+* Useful packages beyond stdlib II
+
+manage S3-compatible storage systems:
+.link https://github.com/minio/minio-go minio/minio-go
+
+access the GitHub API:
+.link https://github.com/google/go-github google/go-github
+
+metrics:
+.link https://godoc.org/github.com/prometheus/client_golang/prometheus github.com/prometheus/client_golang/prometheus
+
+* Case studies
+
+* Overview case studies
+
+- [[https://github.com/kubernetes/kubernetes/][kubernetes/kubernetes]]
+- [[https://github.com/hashicorp/consul][hashicorp/consul]]
+- [[https://github.com/coreos/etcd][coreos/etcd]]
+- [[https://github.com/cockroachdb/cockroach][cockroachdb/cockroach]]
+- [[https://github.com/minio/minio][minio/minio]]
+
+* Overview case studies
+
+All stats taken on 2017-07-06:
+
+.code overview-stats
+
+* Overview case studies
+
+Used [[https://github.com/AlDanial/cloc][cloc]] to generate raw stats:
+
+.code loc-stats
+
+* Kubernetes
+
+.image images/k8s-logo.png _ 200
+
+[[http://kubernetes.io]]—a container orchestration platform
+
+* Kubernetes
+
+API Server
+
+* Consul
+
+.image images/consul-logo.png _ 300
+
+[[https://consul.io]]—a tool for service discovery and configuration
+
+* Consul
+
+[[https://www.consul.io/docs/internals/architecture.html][Architecture]] overview:
+
+.image images/consul-architecture.png 500 _
+
+* Consul terminology
+
+- *Agent*: Long running daemon on every member of cluster, able to run in either client or server mode.
+- *Client*: An agent that forwards all RPCs to a server, relatively stateless, taking part in the LAN gossip pool.
+- *Server*: An agent participating in the Raft quorum, maintaining cluster state, responding to RPC queries, and forwarding queries to leaders.
+
+* Consul: hunting a bug
+
+Starting point is [[https://github.com/hashicorp/consul/issues/1580][issue 1580]]:
+
+  I'm chasing a Consul node-flapping issue that is triggered
+  by a change of IP address. In our environment, development
+  nodes running a Consul agent are configured to go into
+  sleep or standby when not in use. Unfortunately the DHCP
+  server in this environment assigns a new IP address to each
+  of these nodes when the node returns to a running state,
+  which means the IP address that Consul advertises is no
+  longer associated with the node on which the agent is running.
+
+Following the breadcrumb trail via [[https://github.com/hashicorp/consul/issues/457][issue 457]], [[https://github.com/hashicorp/consul/issues/839][issue 839]], and [[https://github.com/hashicorp/consul/pull/850][PR 850]] we end up in package [[https://github.com/hashicorp/consul/blob/master/agent/][github.com/hashicorp/consul/agent]], file `local.go`.
+
+* Consul agent (part 1/4)
+
+In `local.go` of package `github.com/hashicorp/consul/agent` we find:
+
+.code -numbers source/consul_agent_local.go /\/\/ localState is used/,/nodeInfoInSync bool/ HLdelegate
+
+* Consul agent (part 2/4)
+
+.code -numbers source/consul_agent_local.go /\/\ Services tracks the local services/,/time.Timer/
+
+* Consul agent (part 3/4)
+
+.code -numbers source/consul_agent_local.go /\/\ metadata tracks the local metadata fields/,/}\n}/
+
+* Consul agent (part 4/4)
+
+The `delegate` interface is defined in file `agent.go` of package `github.com/hashicorp/consul/agent`:
+
+.code -numbers source/consul_agent_agent.go /\/\/ delegate defines the interface shared/,/string\n}/
+
+* etcd
+
+.image images/etcd-logo.png _ 200
+
+[[https://coreos.com/etcd]]—a distributed, reliable key-value store
+
+* etcd
+
+A little [[https://coreos.com/etcd/docs/latest/learning/why.html][comparison]] with related systems:
+
+.image images/etcd-vs-zk.png 500 _
+
+* etcd v2 → v3
+
+There was an interesting transition from [[https://coreos.com/etcd/docs/latest/op-guide/v2-migration.html][etcd 2 to 3]]:
+
+- HTTP/JSON → gRPC/protobuf
+- hierarchical key space → flat key space
+- TTL → leases
+- compare-n-swap → transactions
+
+See also my notes on [[https://hackernoon.com/notes-on-moving-from-etcd2-to-etcd3-dedb26057b90][moving from etcd2 to etcd3]].
+
+* etcd v2 → v3 (part 1/4)
+
+In etcd v2 the `key-value` API ([[https://github.com/coreos/etcd/blob/master/client/keys.go][keys.go]]) was:
+
+.code -numbers source/etcd_keysapi2.go /type KeysAPI interface/,/Create\(/
+
+* etcd v2 → v3 (part 2/4)
+
+.code -numbers source/etcd_keysapi2.go /CreateInOrder/,/Watcher\n}/
+
+* etcd v2 → v3 (part 3/4)
+
+In etcd v3 this API ([[https://github.com/coreos/etcd/blob/master/clientv3/kv.go][kv.go]]) has changed to:
+
+.code -numbers source/etcd_kv3.go /type KV interface/,/Get\(/
+
+* etcd v2 → v3 (part 4/4)
+
+.code -numbers source/etcd_kv3.go /Delete deletes/,/Txn\n}/
+
+* CockroachDB
+
+.image images/cockroachdb-logo.png _ 200
+
+[[https://cockroachlabs.com]]—a cloud-native SQL database
+
+* CockroachDB
+
+https://github.com/cockroachdb/cockroach/issues/7646
+
+* Minio
+
+.image images/minio-logo.png _ 100
+
+[[https://minio.io]]—object storage server compatible with Amazon S3 APIs
+
+* Minio
+
+[[https://github.com/minio/minio-go/blob/master/api-list.go#L249][ListObjects]]
+
+* Conclusions
+
+* Conclusions
+
+Patterns (see also BBurns book) and [[https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/burns]]
+
+* Conclusions
+
+Some observations from the code reviews carried out in order to prepare this talk:
+
+- subjectively, the top three types of issues encountered were: *timeouts*, *DNS*, and *resource* *exhaustion*
+- `go` `doc` is awesome; high level of coverage; *right* *incentives* such as [[http://godoc.org][godoc.org]]
+- make it possible to *replicate* test and build *pipeline* *locally*
+- … and also, slightly controversial: [[https://medium.com/@mhausenblas/container-assisted-testing-b76ee74278b7][Container Assisted Testing]]
+
+* Conclusions
+
+- Go is a great language for a team to build (complex) distributed systems
+- Discipline and a proper testbed are (still) necessary!
+- Any chance that we're gravitating towards a common lib for distributed Gomputing?
+- Last but not least: [[http://peter.bourgon.org/go-best-practices-2016/][Go best practices, six years in]] also applies
+
+* Questions? Comments?
+
+.image images/q-n-a.gif _ 500
+
+* Kudos
+
+I'd like to thank the following Gophers for inspiration and feedback:
+
+- [[https://twitter.com/davecheney][Dave Cheney]]
+- [[https://twitter.com/bketelsen][Brian Ketelsen]]
+- [[https://twitter.com/francesc][Francesc Campoy]]
+- [[https://twitter.com/peterbourgon][Peter Bourgon]]
