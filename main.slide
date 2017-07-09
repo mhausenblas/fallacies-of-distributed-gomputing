@@ -182,7 +182,15 @@ Used [[https://github.com/AlDanial/cloc][cloc]] to generate raw stats:
 
 * Kubernetes
 
-API Server
+Architecture overview:
+
+.image images/k8s-architecture.png _ 700
+
+* Kubernetes
+
+API Server flow:
+
+.image images/k8s-API-server-flow.png _ 500
 
 * Consul
 
