@@ -1,4 +1,4 @@
-The Fallacies Of Distributed Gomputing
+Fallacies Of Distributed Gomputing
 http://301.sh/2017-gomputing
 14:55 14 Jul 2017
 Tags: Go, distributed systems
@@ -11,7 +11,7 @@ http://mhausenblas.info
 * Agenda
 
 - Scope
-- Overview
+- General observations
 - Case studies
 - Conclusions
 
@@ -57,13 +57,26 @@ She's got you covered ;)
 
 .image images/concurrency-in-go-book.gif
 
-* Overview
+* General observations
 
-* Overview
+* General observations
 
+- form follows function
 - fallacies of distributed computing
 - relevant parts of stdlib
-- useful libraries beyond stdlib
+- useful packages beyond stdlib
+
+* Form follows function
+
+_Or:_ _how_ _the_ _programming_ _language_ _choice_ _influences_ _system_ _characteristics_ …
+
+A few examples of distributed systems and the languages they've been written in:
+
+- `HDFS` (Java) vs. `MapR-FS` (C/C++)
+- `Kafka` (Scala/Java) vs. `RabbitMQ` (Erlang)
+- `etcd` (Go) vs `ZooKeeper` (Java)
+
+.image images/good-cheap-fast.gif 300 _
 
 * Fallacies of distributed computing
 
@@ -138,11 +151,16 @@ metrics:
 
 * Overview case studies
 
+I've reviewed the following distributed systems written in Go:
+
 - [[https://github.com/kubernetes/kubernetes/][kubernetes/kubernetes]]
 - [[https://github.com/hashicorp/consul][hashicorp/consul]]
 - [[https://github.com/coreos/etcd][coreos/etcd]]
 - [[https://github.com/cockroachdb/cockroach][cockroachdb/cockroach]]
 - [[https://github.com/minio/minio][minio/minio]]
+
+Let's now discuss aspects of how above systems address
+the fallacies of distributed computing using Go.
 
 * Overview case studies
 
@@ -308,9 +326,7 @@ Some observations from the code reviews carried out in order to prepare this tal
 
 .image images/q-n-a.gif _ 500
 
-* Kudos
-
-I'd like to thank the following Gophers for inspiration and feedback:
+* Kudos go out to …
 
 - [[https://twitter.com/davecheney][Dave Cheney]]
 - [[https://twitter.com/bketelsen][Brian Ketelsen]]

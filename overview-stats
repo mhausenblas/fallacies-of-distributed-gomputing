@@ -1,7 +1,7 @@
-project       LOC         commits   contributors  initial commit
-----------------------------------------------------------------
-Kubernetes    2,000,584   50,885    1,273         2014-06-01
-Consul        377,707     6,014     345           2013-11-03
-etcd          352,923     11,703    370           2013-06-02
-CockroachDB   323,548     20,526    144           2014-02-02
-Minio         273,711     4,327     75            2014-10-26
+project       LOC         commits   contributors   initial commit   releases   stars  vendoring
+-----------------------------------------------------------------------------------------------
+Kubernetes    2,000,584   50,885    1,273          2014-06-01       262        24k    godep
+Consul        377,707     6,014     345            2013-11-03       37         9.5k   govendor
+etcd          352,923     11,703    370            2013-06-02       107        14k    glide
+CockroachDB   323,548     20,526    144            2014-02-02       56         10k    dep
+Minio         273,711     4,327     75             2014-10-26       28         7.3k   custom
