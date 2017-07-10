@@ -61,10 +61,10 @@ She's got you covered ;)
 
 * General observations
 
-- form follows function
-- fallacies of distributed computing
-- relevant parts of stdlib
-- useful packages beyond stdlib
+- Form follows function
+- Fallacies of distributed computing
+- Relevant parts of stdlib
+- Useful packages beyond stdlib
 
 * Form follows function
 
@@ -97,16 +97,27 @@ In a nutshell:
 
 Source: Peter Deutsch (1994), see [[https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing][Wikipedia]]
 
-* Fallacies of distributed computing
+* Fallacies of distributed computing—addressed
 
 1. The network is reliable ↦ _timeouts_, _error_ _handling_, _retry_ _logic_
 2. Latency is zero ↦ _cancelation_, _partial_ _results_
 3. Bandwidth is infinite ↦ _CDNs_, _protobuf_  _rather_ _than_ _JSON_
 4. The network is secure ↦ _SSL/TLS_, _digital_ _signatures_, _checksums_
 5. Topology doesn't change ↦ _DNS_ _vs._ _IP_ _addresses_, _TTL_
-6. There is one administrator ↦ _immutablility_, _auditing_, _role-based_ _access_
+6. There is one administrator ↦ _auditing_, _role-based_ _access_, _immutability_
 7. Transport cost is zero ↦ _cost_ _of_ _(un)marshalling_
-8. The network is homogeneous ↦ _i14y_ _on_ _all_ _levels_
+8. The network is homogeneous ↦ _interoperability_ _on_ _all_ _levels_
+
+* Fallacies of distributed computing—addressed in Go
+
+1. The network is reliable ↦ `context.WithTimeout`, `net.OpError`, `syscall.Errno` (?)
+2. Latency is zero ↦ `context.WithCancel`, `encoding/json.Decoder.Decode(Stream)`
+3. Bandwidth is infinite ↦ `golang/protobuf`
+4. The network is secure ↦ `crypto/tls`, `crypto/x509`
+5. Topology doesn't change ↦ be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go resolver]]
+6. There is one administrator ↦ [[https://github.com/casbin/casbin][casbin/casbin]], [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][Immutability on Go]]
+7. Transport cost is zero ↦ performance of `encoding/json.Marshal`
+8. The network is homogeneous ↦ broad and well-tested stdlib
 
 * Fallacies of distributed computing
 
