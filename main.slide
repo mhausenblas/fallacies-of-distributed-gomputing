@@ -310,13 +310,24 @@ In [[https://www.youtube.com/watch?v=hWNwI5q01gI][The Challenges of Writing a Ma
 
 * CockroachDB
 
-https://github.com/cockroachdb/cockroach/issues/7646
+[[https://github.com/cockroachdb/cockroach/blob/master/docs/design.md][Architecture]] overview:
+
+.image images/cockroachdb-architecture.png 500 _
+
+* CockroachDB
+
+https://github.com/cockroachdb/cockroach/pull/5512
 
 * Minio
 
 .image images/minio-logo.png _ 100
 
 [[https://minio.io]]—object storage server compatible with Amazon S3 APIs
+
+- containers as first class citizens
+- up to 5TB sized objects
+- uses [[https://docs.minio.io/docs/minio-erasure-code-quickstart-guide][erasure code]] algorithm to protect data
+- also offers a fuse driver (MinFS) to mount remote bucket locally
 
 * Minio
 
