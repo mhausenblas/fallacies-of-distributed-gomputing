@@ -296,6 +296,20 @@ In etcd v3 this API ([[https://github.com/coreos/etcd/blob/master/clientv3/kv.go
 
 * CockroachDB
 
+In [[https://www.youtube.com/watch?v=hWNwI5q01gI][The Challenges of Writing a Massive and Complex Go Application]] _Ben_ _Darnell_ _(CTO_ _of_ _CockroachLabs)_, explains why they're using Go for a distributed database:
+
+.image images/cockroachdb-why-go.png _ 400
+
+  We opted for Go when building CockroachDB, a scale-out, relational database, because of its
+  support for libraries, interfaces, and tooling. However, it has come with its own frustrations,
+  often related to performance and synchronization. And as for Cgo, RocksDB, and other critical
+  external libraries, we've had to hunt down or develop creative workarounds to ensure they work
+  well the rest of the toolchain. In this talk, we'll share how we've optimized our memory usage to
+  mitigate issues related to garbage collection and improved our use of channels to avoid deadlocks.
+  We will also share creative techniques to integrate non-Go dependencies into the Go build process.
+
+* CockroachDB
+
 https://github.com/cockroachdb/cockroach/issues/7646
 
 * Minio
