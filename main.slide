@@ -113,11 +113,11 @@ Source: Peter Deutsch (1994), see [[https://en.wikipedia.org/wiki/Fallacies_of_d
 1. The network is reliable ↦ `context.WithTimeout`, `net.OpError`, `syscall.Errno` (?)
 2. Latency is zero ↦ `context.WithCancel`, `encoding/json.Decoder.Decode(Stream)`
 3. Bandwidth is infinite ↦ `golang/protobuf`
-4. The network is secure ↦ `crypto/tls`, `crypto/x509`
-5. Topology doesn't change ↦ be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go resolver]]
-6. There is one administrator ↦ [[https://github.com/casbin/casbin][casbin/casbin]], [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][Immutability on Go]]
-7. Transport cost is zero ↦ performance of `encoding/json.Marshal`
-8. The network is homogeneous ↦ broad and well-tested stdlib
+4. The network is secure ↦ `crypto/tls`, `crypto/rsa`, `crypto/sha512`, `crypto/x509`
+5. Topology doesn't change ↦ be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go (DNS) resolver]]
+6. There is one administrator ↦ [[https://github.com/casbin/casbin][casbin/casbin]] (authz lib/ACL, RBAC, ABAC), [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][immutability]]
+7. Transport cost is zero ↦ performance of `encoding/json.Marshal`? `pprof` it?
+8. The network is homogeneous ↦ broad & well-tested stdlib across different OS/archs
 
 * Fallacies of distributed computing
 
