@@ -102,17 +102,17 @@ func NewKeysAPIWithPrefix(c Client, p string) KeysAPI {
 
 type KeysAPI interface {
 	// Get retrieves a set of Nodes from etcd
-	Get(ctx context.Context, key string, opts *GetOptions) (*Response, error)
+	Get(ctx context.Context, key string, opts *GetOptions) (*Response, error) // HL1
 
 	// Set assigns a new value to a Node identified by a given key. The caller
 	// may define a set of conditions in the SetOptions. If SetOptions.Dir=true
 	// then value is ignored.
-	Set(ctx context.Context, key, value string, opts *SetOptions) (*Response, error)
+	Set(ctx context.Context, key, value string, opts *SetOptions) (*Response, error) // HL1
 
 	// Delete removes a Node identified by the given key, optionally destroying
 	// all of its children as well. The caller may define a set of required
 	// conditions in an DeleteOptions object.
-	Delete(ctx context.Context, key string, opts *DeleteOptions) (*Response, error)
+	Delete(ctx context.Context, key string, opts *DeleteOptions) (*Response, error) // HL1
 
 	// Create is an alias for Set w/ PrevExist=false
 	Create(ctx context.Context, key, value string) (*Response, error)

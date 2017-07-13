@@ -33,7 +33,7 @@ type KV interface {
 	// Note that key,value can be plain bytes array and string is
 	// an immutable representation of that bytes array.
 	// To get a string of bytes, do string([]byte{0x10, 0x20}).
-	Put(ctx context.Context, key, val string, opts ...OpOption) (*PutResponse, error)
+	Put(ctx context.Context, key, val string, opts ...OpOption) (*PutResponse, error) // HL1
 
 	// Get retrieves keys.
 	// By default, Get will return the value for "key", if any.
@@ -43,10 +43,10 @@ type KV interface {
 	// if the required revision is compacted, the request will fail with ErrCompacted .
 	// When passed WithLimit(limit), the number of returned keys is bounded by limit.
 	// When passed WithSort(), the keys will be sorted.
-	Get(ctx context.Context, key string, opts ...OpOption) (*GetResponse, error)
+	Get(ctx context.Context, key string, opts ...OpOption) (*GetResponse, error) // HL1
 
 	// Delete deletes a key, or optionally using WithRange(end), [key, end).
-	Delete(ctx context.Context, key string, opts ...OpOption) (*DeleteResponse, error)
+	Delete(ctx context.Context, key string, opts ...OpOption) (*DeleteResponse, error) // HL2
 
 	// Compact compacts etcd KV history before the given rev.
 	Compact(ctx context.Context, rev int64, opts ...CompactOption) (*CompactResponse, error)

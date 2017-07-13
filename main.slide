@@ -21,7 +21,7 @@ http://mhausenblas.info
 
 * Scope
 
-: Before we jump in let's define what is and what is not in scope.
+: Let's define what is and what is not in scope.
 
 * In scope for this talk
 
@@ -66,17 +66,22 @@ She's got you covered ;)
 - Relevant parts of stdlib
 - Useful packages beyond stdlib
 
+: Before we have a look at the case studies, some general observations
+
 * Form follows function
 
 _Or:_ _how_ _the_ _programming_ _language_ _choice_ _influences_ _system_ _characteristics_ …
-
-A few examples of distributed systems and the languages they've been written in:
 
 - `HDFS` (Java) vs. `MapR-FS` (C/C++)
 - `Kafka` (Scala/Java) vs. `RabbitMQ` (Erlang)
 - `etcd` (Go) vs `ZooKeeper` (Java)
 
 .image images/good-cheap-fast.gif 300 _
+
+: A few examples of distributed systems and how the chosen languages impacts operations
+: When working at MapR, I saw the performance penalties of the stop-the-world GC of HDFS and esp. HBase vs the C++ based MapR product
+: A counter-example is Kafka. It's super fast and high-throughput.
+: Last but not least etcd, esp. v3 with new storage engine, utilizing gRPC., etc.
 
 * Fallacies of distributed computing
 
@@ -135,19 +140,30 @@ _Just_ _a_ _friendly_ _word_ _of_ _warning:_
 - [[https://golang.org/pkg/context/][context]]
 - [[https://golang.org/pkg/time/][time]]
 
-
 * Useful packages beyond stdlib I
 
 modern RPC:
 .link http://grpc.io/ gRPC
 
+web sockets:
+
+.link https://github.com/gobwas/ws gobwas/ws
+
 a powerful URL router and dispatcher:
 .link https://github.com/gorilla/mux gorilla/mux
+
+* Useful packages beyond stdlib II
 
 SSH client and server:
 .link https://godoc.org/golang.org/x/crypto/ssh golang.org/x/crypto/ssh
 
-* Useful packages beyond stdlib II
+OAuth2 JSON Web Token flow support:
+.link https://godoc.org/golang.org/x/oauth2/jwt golang.org/x/oauth2/jwt
+
+Tracing of requests and long-lived objects:
+.link https://godoc.org/golang.org/x/net/trace golang.org/x/net/trace
+
+* Useful packages beyond stdlib III
 
 manage S3-compatible storage systems:
 .link https://github.com/minio/minio-go minio/minio-go
@@ -162,16 +178,14 @@ metrics:
 
 * Overview case studies
 
-I've reviewed the following distributed systems written in Go:
-
 - [[https://github.com/kubernetes/kubernetes/][kubernetes/kubernetes]]
 - [[https://github.com/hashicorp/consul][hashicorp/consul]]
 - [[https://github.com/coreos/etcd][coreos/etcd]]
 - [[https://github.com/cockroachdb/cockroach][cockroachdb/cockroach]]
 - [[https://github.com/minio/minio][minio/minio]]
 
-Let's now discuss aspects of how above systems address
-the fallacies of distributed computing using Go.
+: I've reviewed the following distributed systems, all written in Go in the past couple of years
+: Let's now discuss aspects of how above systems address the fallacies of distributed computing using Go
 
 * Overview case studies
 
@@ -202,11 +216,17 @@ Architecture overview:
 
 .image images/k8s-architecture.png _ 700
 
-* Kubernetes
+* Kubernetes: API Server request flow
 
-API Server flow:
+.image images/k8s-API-server-flow.png _ 450
 
-.image images/k8s-API-server-flow.png _ 500
+More details via our blog post series [[https://blog.openshift.com/kubernetes-deep-dive-api-server-part-1/][Kubernetes deep dive: API Server]]
+
+* Kubernetes: API Server
+
+.code -numbers source/k8s_config.go /func DefaultBuildHandlerChain/,/apiHandler\)\)\n}/
+
+: Let's now drill down into the DefaultBuildHandlerChain function
 
 * Consul
 
@@ -231,7 +251,7 @@ API Server flow:
 - *Client*: An agent that forwards all RPCs to a server, relatively stateless, taking part in the LAN gossip pool.
 - *Server*: An agent participating in the Raft quorum, maintaining cluster state, responding to RPC queries, and forwarding queries to leaders.
 
-* Consul: hunting a bug
+* Consul: bug hunting
 
 Starting point is [[https://github.com/hashicorp/consul/issues/1580][issue 1580]]:
 
@@ -298,7 +318,7 @@ See also my notes on [[https://hackernoon.com/notes-on-moving-from-etcd2-to-etcd
 
 In etcd v2 the `key-value` API ([[https://github.com/coreos/etcd/blob/master/client/keys.go][keys.go]]) was:
 
-.code -numbers source/etcd_keysapi2.go /type KeysAPI interface/,/Create\(/
+.code -numbers source/etcd_keysapi2.go /type KeysAPI interface/,/Create\(/ HL1
 
 * etcd v2 → v3 (part 2/4)
 
@@ -308,11 +328,11 @@ In etcd v2 the `key-value` API ([[https://github.com/coreos/etcd/blob/master/cli
 
 In etcd v3 this API ([[https://github.com/coreos/etcd/blob/master/clientv3/kv.go][kv.go]]) has changed to:
 
-.code -numbers source/etcd_kv3.go /type KV interface/,/Get\(/
+.code -numbers source/etcd_kv3.go /type KV interface/,/Get\(/ HL1
 
 * etcd v2 → v3 (part 4/4)
 
-.code -numbers source/etcd_kv3.go /Delete deletes/,/Txn\n}/
+.code -numbers source/etcd_kv3.go /Delete deletes/,/Txn\n}/ HL2
 
 * CockroachDB
 
@@ -361,13 +381,19 @@ https://github.com/cockroachdb/cockroach/pull/5512
 
 * Minio
 
-[[https://github.com/minio/minio-go/blob/master/api-list.go#L249][ListObjects]]
+Erasure code
 
 * Conclusions
 
 * Conclusions
 
-Patterns (see also BBurns book) and [[https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/burns]]
+We see certain patterns emerging. See also [[http://shop.oreilly.com/product/0636920072768.do][Brendan Burns' book]]:
+
+.image images/designing-distributed-systems-book.png _ 380
+
+
+
+ [[https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/burns]]
 
 * Conclusions
 
