@@ -377,11 +377,32 @@ https://github.com/cockroachdb/cockroach/pull/5512
 - containers as first class citizens
 - up to 5TB sized objects
 - uses [[https://docs.minio.io/docs/minio-erasure-code-quickstart-guide][erasure code]] algorithm to protect data
-- also offers a fuse driver (MinFS) to mount remote bucket locally
+- `gateway` for multi-cloud (Azure, GCS, S3) access
 
-* Minio
+: The gateway command is a recent addition, serving as S3 compatible proxy for different back-ends with support for full S3 API, incl. multi-part uploads
 
-Erasure code
+* Minio: gateway (part 1/5)
+
+In [[https://github.com/minio/minio/blob/master/cmd/gateway-main.go][cmd/gateway-main.go]]:
+
+.code -numbers source/minio_gateway-main.go /func gatewayMain/,/fatalIf\(createConfigDir/
+
+* Minio: gateway (part 2/5)
+
+.code -numbers source/minio_gateway-main.go /\/\/ Initialize gateway config./,/router := mux./
+
+* Minio: gateway (part 3/5)
+
+.code -numbers source/minio_gateway-main.go /\/\/ Register web router when its enabled./,/setCorsHandler/
+
+* Minio: gateway (part 4/5)
+
+.code -numbers source/minio_gateway-main.go /\/\/ Validates all incoming URL resources,/,/globalObjLayerMutex.Unlock/
+
+* Minio: gateway (part 5/5)
+
+.code -numbers source/minio_gateway-main.go /\/\/ Prints the formatted startup message once object layer is initialized./,/handleSignals\(\)\n}/
+
 
 * Conclusions
 
@@ -390,8 +411,6 @@ Erasure code
 We see certain patterns emerging. See also [[http://shop.oreilly.com/product/0636920072768.do][Brendan Burns' book]]:
 
 .image images/designing-distributed-systems-book.png _ 380
-
-
 
  [[https://www.usenix.org/conference/hotcloud16/workshop-program/presentation/burns]]
 
