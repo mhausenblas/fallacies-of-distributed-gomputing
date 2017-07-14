@@ -253,13 +253,13 @@ Used [[https://github.com/AlDanial/cloc][cloc]] to generate raw stats:
 
 * Kubernetes—fallacies covered
 
-.image images/fallacy-1.png 32 _
+.image images/fallacy-1.png 80 _
 1. The network is reliable.
 
-.image images/fallacy-4.png 32 _
+.image images/fallacy-4.png 80 _
 4. The network is secure.
 
-.image images/fallacy-7.png 32 _
+.image images/fallacy-7.png 80 _
 7. Transport cost is zero.
 
 * Kubernetes
@@ -293,7 +293,7 @@ More details via our blog post series [[https://blog.openshift.com/kubernetes-de
 
 * Consul—fallacies covered
 
-.image images/fallacy-5.png 32 _
+.image images/fallacy-5.png 80 _
 5. Topology doesn't change.
 
 * Consul
@@ -356,13 +356,13 @@ The `delegate` interface is defined in file `agent.go` of package `github.com/ha
 
 * etcd—fallacies covered
 
-.image images/fallacy-1.png 32 _
+.image images/fallacy-1.png 80 _
 1. The network is reliable.
 
-.image images/fallacy-3.png 32 _
+.image images/fallacy-3.png 80 _
 3. Bandwidth is infinite
 
-.image images/fallacy-7.png 32 _
+.image images/fallacy-7.png 80 _
 7. Transport cost is zero.
 
 * etcd
@@ -414,10 +414,10 @@ In etcd v3 this API ([[https://github.com/coreos/etcd/blob/master/clientv3/kv.go
 
 * CockroachDB—fallacies covered
 
-.image images/fallacy-2.png 32 _
+.image images/fallacy-2.png 80 _
 2. Latency is zero
 
-.image images/fallacy-8.png 32 _
+.image images/fallacy-8.png 80 _
 8. The network is homogeneous
 
 * CockroachDB
@@ -478,10 +478,10 @@ The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][desig
 
 * Minio—fallacies covered
 
-.image images/fallacy-1.png 32 _
+.image images/fallacy-1.png 80 _
 1. The network is reliable
 
-.image images/fallacy-7.png 32 _
+.image images/fallacy-7.png 80 _
 7. Transport cost is zero
 
 * Minio: gateway (part 1/5)
