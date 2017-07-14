@@ -174,7 +174,7 @@ In Go: be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure G
 
 In general: _auditing_, _role-based_ _access_, _immutability_
 
-Go language & stdlib::
+Go language & stdlib:
 
 - functional programming
 - [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][immutability]]
