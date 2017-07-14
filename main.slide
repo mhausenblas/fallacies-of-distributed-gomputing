@@ -466,8 +466,6 @@ After some digging into PR 5512 we arrive at package [[http://godoc.org/github.c
 
 [[https://minio.io]]—object storage server compatible with Amazon S3 APIs
 
-The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][design doc]] tells us:
-
 - Cloud-native/container-ready objects with up to 5TB in size
 - Storage API covers local storage as well as network storage
 - Uses [[https://docs.minio.io/docs/minio-erasure-code-quickstart-guide][erasure code]] algorithm to protect data
@@ -483,6 +481,12 @@ The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][desig
 
 .image images/fallacy-7.png 80 _
 7. Transport cost is zero
+
+* Minio
+
+The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][design doc]] explains different modes (local, erasure, proxy):
+
+.image images/minio-architecture.png 500 _
 
 * Minio: gateway (part 1/5)
 
@@ -535,9 +539,11 @@ We see certain patterns emerging. See also [[http://shop.oreilly.com/product/063
 
 * Conclusions
 
-- Go is good for distributed systems
-- Go scales both human and machine
-- Be aware of the fallacies and how to avoid them
+- Go is a great fit for writing distributed systems
+- Go scales: both in the human dimension and concerning machines
+- Be aware of the 8 fallacies and how to avoid them!
+
+.image images/fallacies.png _ 900
 
 * Questions? Comments?
 
@@ -549,3 +555,4 @@ We see certain patterns emerging. See also [[http://shop.oreilly.com/product/063
 - [[https://twitter.com/bketelsen][Brian Ketelsen]]
 - [[https://twitter.com/francesc][Francesc Campoy]]
 - [[https://twitter.com/peterbourgon][Peter Bourgon]]
+- [[https://twitter.com/@ashleymcnamara][Ashley McNamara]]
