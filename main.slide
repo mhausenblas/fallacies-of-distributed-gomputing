@@ -10,8 +10,8 @@ http://mhausenblas.info
 
 * fmt.Sprintf("%v", mhausenblas)
 
-- working on distributed systems in the past ~17 years
-- C++, Java, Python and past two years Go
+- working on distributed systems in the past ~20 years
+- C++, Java, Python, JavaScript/Node.js and past two years Go
 - Web data & 'big data' (research, MapR)
 - container orchestrators (Mesosphere, Red Hat)
 - more dev than ops
@@ -122,6 +122,8 @@ Beyond stdlib:
 .link https://github.com/gobwas/ws gobwas/ws
 .link https://github.com/gorilla/mux gorilla/mux
 
+.image images/fallacy-1.png 100 _
+
 * 2. Latency is zero
 
 In general: _cancelation_, _partial_ _results_
@@ -135,6 +137,8 @@ Beyond stdlib:
 
 .link https://godoc.org/golang.org/x/net/trace golang.org/x/net/trace
 
+.image images/fallacy-2.png 100 _
+
 * 3. Bandwidth is infinite
 
 In general: _CDNs_, _protobuf_  _rather_ _than_ _JSON_
@@ -142,6 +146,8 @@ In general: _CDNs_, _protobuf_  _rather_ _than_ _JSON_
 Go:
 
 .link https://github.com/golang/protobuf golang/protobuf
+
+.image images/fallacy-3.png 100 _
 
 * 4. The network is secure
 
@@ -154,11 +160,15 @@ Beyond stdlib:
 .link https://godoc.org/golang.org/x/crypto/ssh golang.org/x/crypto/ssh
 .link https://godoc.org/golang.org/x/oauth2/jwt golang.org/x/oauth2/jwt
 
+.image images/fallacy-4.png 100 _
+
 * 5. Topology doesn't change
 
 In general: _DNS_ _vs._ _IP_ _addresses_, _TTL_
 
 In Go: be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go (DNS) resolver]]
+
+.image images/fallacy-5.png 100 _
 
 * 6. There is one administrator
 
@@ -173,6 +183,8 @@ Beyond stdlib:
 
 .link https://github.com/casbin/casbin] casbin/casbin (authz lib/ACL, RBAC, ABAC)
 
+.image images/fallacy-6.png 100 _
+
 * 7. Transport cost is zero
 
 In general: _cost_ _of_ _(un)marshalling_
@@ -186,6 +198,8 @@ Beyond stdlib:
 
 .link http://grpc.io/ gRPC
 
+.image images/fallacy-7.png 100 _
+
 * 8. The network is homogeneous
 
 In general: _interoperability_ _on_ _all_ _levels_
@@ -197,6 +211,8 @@ Beyond stdlib:
 .link https://github.com/minio/minio-go minio/minio-go
 .link https://github.com/google/go-github google/go-github
 .link https://godoc.org/github.com/prometheus/client_golang/prometheus github.com/prometheus/client_golang/prometheus
+
+.image images/fallacy-8.png 100 _
 
 * Case studies
 
@@ -234,6 +250,18 @@ Used [[https://github.com/AlDanial/cloc][cloc]] to generate raw stats:
 - Initially was depending on Docker (now: CRI-O)
 - Bring your own SDN, minimal core + plugins
 
+
+* Kubernetes—fallacies covered
+
+.image images/fallacy-1.png 32 _
+1. The network is reliable.
+
+.image images/fallacy-4.png 32 _
+4. The network is secure.
+
+.image images/fallacy-7.png 32 _
+7. Transport cost is zero.
+
 * Kubernetes
 
 Architecture overview:
@@ -262,6 +290,11 @@ More details via our blog post series [[https://blog.openshift.com/kubernetes-de
 - Can provide service discovery (microservices architecture)
 - Can be used as a key-value store
 - Uses Serf lib as [[https://www.consul.io/docs/internals/gossip.html][gossip]] protocol (manage membership/broadcast messages)
+
+* Consul—fallacies covered
+
+.image images/fallacy-5.png 32 _
+5. Topology doesn't change.
 
 * Consul
 
@@ -321,6 +354,17 @@ The `delegate` interface is defined in file `agent.go` of package `github.com/ha
 - Exposes HTTP and gRPC interfaces
 - Automatic TLS with optional client cert authentication
 
+* etcd—fallacies covered
+
+.image images/fallacy-1.png 32 _
+1. The network is reliable.
+
+.image images/fallacy-3.png 32 _
+3. Bandwidth is infinite
+
+.image images/fallacy-7.png 32 _
+7. Transport cost is zero.
+
 * etcd
 
 A little [[https://coreos.com/etcd/docs/latest/learning/why.html][comparison]] with related systems:
@@ -368,6 +412,14 @@ In etcd v3 this API ([[https://github.com/coreos/etcd/blob/master/clientv3/kv.go
 - Every node in the cluster can act as SQL gateway, mapping and executing SQL statements to key-value operations
 - Uses [[http://rocksdb.org][RocksDB]] (variant of Google's LevelDB storage lib) for persistency
 
+* CockroachDB—fallacies covered
+
+.image images/fallacy-2.png 32 _
+2. Latency is zero
+
+.image images/fallacy-8.png 32 _
+8. The network is homogeneous
+
 * CockroachDB
 
 [[https://github.com/cockroachdb/cockroach/blob/master/docs/design.md][Architecture]] overview:
@@ -392,8 +444,6 @@ In [[https://www.youtube.com/watch?v=hWNwI5q01gI][The Challenges of Writing a Ma
 
 Starting point is [[https://github.com/cockroachdb/cockroach/pull/5512][PR 5512]], addressing [[https://github.com/cockroachdb/cockroach/issues/3779][Issue 3779]], [[https://github.com/cockroachdb/cockroach/issues/4818][Issue 4818]], [[https://github.com/cockroachdb/cockroach/issues/4884][Issue 4884]], and [[https://github.com/cockroachdb/cockroach/issues/7887][Issue 7887]]:
 
-
-
 .image images/cockroachdb_pr5512.png _ 800
 
 * CockroachDB: RPC clock offsets (part 1/3)
@@ -410,20 +460,29 @@ After some digging into PR 5512 we arrive at package [[http://godoc.org/github.c
 
 .code -numbers source/cockroach_clock_offset.go /mean, err /,/return nil\n}/
 
-
 * Minio
 
 .image images/minio-logo.png _ 100
 
 [[https://minio.io]]—object storage server compatible with Amazon S3 APIs
 
-- containers as first class citizens
-- up to 5TB sized objects
-- uses [[https://docs.minio.io/docs/minio-erasure-code-quickstart-guide][erasure code]] algorithm to protect data
-- `gateway` for multi-cloud (Azure, GCS, S3) access
+The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][design doc]] tells us:
+
+- Cloud-native/container-ready objects with up to 5TB in size
+- Storage API covers local storage as well as network storage
+- Uses [[https://docs.minio.io/docs/minio-erasure-code-quickstart-guide][erasure code]] algorithm to protect data
+- New: `gateway` for multi-cloud (Azure, GCS, S3) access
 
 : The gateway command is a recent addition, serving as S3 compatible proxy for different back-ends with support for full S3 API, incl. multi-part uploads
 : If you want to learn more about the gateway, tomorrow at 11am in Mile High Ballroom 1A Frank Wessels of Minio will give a deep dive
+
+* Minio—fallacies covered
+
+.image images/fallacy-1.png 32 _
+1. The network is reliable
+
+.image images/fallacy-7.png 32 _
+7. Transport cost is zero
 
 * Minio: gateway (part 1/5)
 
