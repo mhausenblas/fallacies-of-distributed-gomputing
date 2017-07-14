@@ -484,9 +484,9 @@ After some digging into PR 5512 we arrive at package [[http://godoc.org/github.c
 
 * Minio
 
-The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][design doc]] explains different modes (local, erasure, proxy):
+The [[https://github.com/fwessels/minio/blob/feature/design-doc/DESIGN.md][design doc]] defines storage API (local, erasure, proxy):
 
-.image images/minio-architecture.png 500 _
+.image images/minio-architecture.png 400 _
 
 * Minio: gateway (part 1/5)
 
@@ -510,22 +510,15 @@ In [[https://github.com/minio/minio/blob/master/cmd/gateway-main.go][cmd/gateway
 
 .code -numbers source/minio_gateway-main.go /\/\/ Prints the formatted startup message once object layer is initialized./,/handleSignals\(\)\n}/
 
-
 * Observations & further reading
 
 * Some observations
 
 - subjectively, the top three types of issues encountered were: *timeouts*, *DNS*, and *resource* *exhaustion*
 - `go` `doc` is awesome; high level of coverage; *right* *incentives* such as [[http://godoc.org][godoc.org]]
+- [[http://peter.bourgon.org/go-best-practices-2016/][Go best practices, six years in]] also applies (think: operations)
 - make it possible to *replicate* test and build *pipeline* *locally*
 - … and also, slightly controversial: [[https://medium.com/@mhausenblas/container-assisted-testing-b76ee74278b7][Container Assisted Testing]]
-
-* Some observations
-
-- Go is a great language for a team to build (complex) distributed systems
-- Discipline and a proper testbed are (still) necessary!
-- Any chance that we're gravitating towards a common lib for distributed Gomputing?
-- Last but not least: [[http://peter.bourgon.org/go-best-practices-2016/][Go best practices, six years in]] also applies
 
 * Further reading
 
@@ -539,9 +532,12 @@ We see certain patterns emerging. See also [[http://shop.oreilly.com/product/063
 
 * Conclusions
 
-- Go is a great fit for writing distributed systems
+- Go is a great language for a team to build (complex) distributed systems
 - Go scales: both in the human dimension and concerning machines
-- Be aware of the 8 fallacies and how to avoid them!
+- Any chance that we're gravitating towards a common lib for 'distributed gomputing'?
+
+
+Take home message: *be* *aware* *of* *the* *8* *fallacies* *and* *how* *to* *avoid* *them!*
 
 .image images/fallacies.png _ 900
 
