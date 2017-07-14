@@ -8,16 +8,22 @@ Developer Advocate, Red Hat
 http://mhausenblas.info
 @mhausenblas
 
+* fmt.Sprintf("%v", mhausenblas)
+
+- working on distributed systems in the past ~17 years
+- C++, Java, Python and past two years Go
+- Web data & 'big data' (research, MapR)
+- container orchestrators (Mesosphere, Red Hat)
+- more dev than ops
+
 * Agenda
 
 - Scope
-- General observations
-- Case studies
+- Fallacies of distributed computing
 - Conclusions
 
 : The topic of this talk is learning how to do distributed systems in Go.
 : For this, we'll have a look at several case studies, distributed systems written in Go.
-: It's really more an archeological or forensics-related talk than a visionary one ;)
 
 * Scope
 
@@ -57,18 +63,9 @@ She's got you covered ;)
 
 .image images/concurrency-in-go-book.gif
 
-* General observations
+* Fallacies of distributed computing
 
-* General observations
-
-- Form follows function
-- Fallacies of distributed computing
-- Relevant parts of stdlib
-- Useful packages beyond stdlib
-
-: Before we have a look at the case studies, some general observations
-
-* Form follows function
+* Quick side note: form follows function
 
 _Or:_ _how_ _the_ _programming_ _language_ _choice_ _influences_ _system_ _characteristics_ …
 
@@ -83,13 +80,11 @@ _Or:_ _how_ _the_ _programming_ _language_ _choice_ _influences_ _system_ _chara
 : A counter-example is Kafka. It's super fast and high-throughput.
 : Last but not least etcd, esp. v3 with new storage engine, utilizing gRPC., etc.
 
-* Fallacies of distributed computing
-
-In a nutshell:
+* Fallacies of distributed computing in a nutshell
 
 .image images/no-way-its-dns.jpg _ 600
 
-* Fallacies of distributed computing
+* Fallacies of distributed computing per Peter Deutsch (1994)
 
 1. The network is reliable.
 2. Latency is zero.
@@ -100,31 +95,9 @@ In a nutshell:
 7. Transport cost is zero.
 8. The network is homogeneous.
 
-Source: Peter Deutsch (1994), see [[https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing][Wikipedia]]
+Source: [[https://en.wikipedia.org/wiki/Fallacies_of_distributed_computing][Wikipedia]]
 
-* Fallacies of distributed computing—addressed
-
-1. The network is reliable ↦ _timeouts_, _error_ _handling_, _retry_ _logic_
-2. Latency is zero ↦ _cancelation_, _partial_ _results_
-3. Bandwidth is infinite ↦ _CDNs_, _protobuf_  _rather_ _than_ _JSON_
-4. The network is secure ↦ _SSL/TLS_, _digital_ _signatures_, _checksums_
-5. Topology doesn't change ↦ _DNS_ _vs._ _IP_ _addresses_, _TTL_
-6. There is one administrator ↦ _auditing_, _role-based_ _access_, _immutability_
-7. Transport cost is zero ↦ _cost_ _of_ _(un)marshalling_
-8. The network is homogeneous ↦ _interoperability_ _on_ _all_ _levels_
-
-* Fallacies of distributed computing—addressed in Go
-
-1. The network is reliable ↦ `context.WithTimeout`, `net.OpError`, `syscall.Errno` (?)
-2. Latency is zero ↦ `context.WithCancel`, `encoding/json.Decoder.Decode(Stream)`
-3. Bandwidth is infinite ↦ `golang/protobuf`
-4. The network is secure ↦ `crypto/tls`, `crypto/rsa`, `crypto/sha512`, `crypto/x509`
-5. Topology doesn't change ↦ be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go (DNS) resolver]]
-6. There is one administrator ↦ [[https://github.com/casbin/casbin][casbin/casbin]] (authz lib/ACL, RBAC, ABAC), [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][immutability]]
-7. Transport cost is zero ↦ performance of `encoding/json.Marshal`? `pprof` it?
-8. The network is homogeneous ↦ broad & well-tested stdlib across different OS/archs
-
-* Fallacies of distributed computing
+* Fallacies of distributed computing—a warning
 
 .image images/kalashnikitty.jpg _ 400
 
@@ -133,45 +106,96 @@ _Just_ _a_ _friendly_ _word_ _of_ _warning:_
   If you think now `ah, that's cute but it won't happen to me` … do not underestimate the
   fallacies, otherwise they *will* come back and bite you. Hard.
 
-* What does the stdlib offer?
+* 1. The network is reliable
 
-- [[https://golang.org/pkg/net/][net/*]]
-- [[https://golang.org/pkg/encoding][encoding/*]]
-- [[https://golang.org/pkg/context/][context]]
+In general: _timeouts_, _error_ _handling_, _retry_ _logic_
+
+Go language & stdlib:
+
 - [[https://golang.org/pkg/time/][time]]
+- [[https://golang.org/pkg/net/][net/*]]
+- [[https://golang.org/pkg/context/][context]]
+- `context.WithTimeout`, `net.OpError`, `syscall.Errno`
 
-* Useful packages beyond stdlib I
-
-modern RPC:
-.link http://grpc.io/ gRPC
-
-web sockets:
+Beyond stdlib:
 
 .link https://github.com/gobwas/ws gobwas/ws
-
-a powerful URL router and dispatcher:
 .link https://github.com/gorilla/mux gorilla/mux
 
-* Useful packages beyond stdlib II
+* 2. Latency is zero
 
-SSH client and server:
-.link https://godoc.org/golang.org/x/crypto/ssh golang.org/x/crypto/ssh
+In general: _cancelation_, _partial_ _results_
 
-OAuth2 JSON Web Token flow support:
-.link https://godoc.org/golang.org/x/oauth2/jwt golang.org/x/oauth2/jwt
+Go language & stdlib:
 
-Tracing of requests and long-lived objects:
+- `context.WithCancel`
+- `encoding/json.Decoder.Decode(Stream)`
+
+Beyond stdlib:
+
 .link https://godoc.org/golang.org/x/net/trace golang.org/x/net/trace
 
-* Useful packages beyond stdlib III
+* 3. Bandwidth is infinite
 
-manage S3-compatible storage systems:
+In general: _CDNs_, _protobuf_  _rather_ _than_ _JSON_
+
+Go:
+
+.link https://github.com/golang/protobuf golang/protobuf
+
+* 4. The network is secure
+
+In general: _SSL/TLS_, _digital_ _signatures_, _checksums_
+
+In Go stdlib: `crypto/tls`, `crypto/rsa`, `crypto/sha512`, `crypto/x509`
+
+Beyond stdlib:
+
+.link https://godoc.org/golang.org/x/crypto/ssh golang.org/x/crypto/ssh
+.link https://godoc.org/golang.org/x/oauth2/jwt golang.org/x/oauth2/jwt
+
+* 5. Topology doesn't change
+
+In general: _DNS_ _vs._ _IP_ _addresses_, _TTL_
+
+In Go: be aware of the [[https://golang.org/pkg/net/#hdr-Name_Resolution][pure Go (DNS) resolver]]
+
+* 6. There is one administrator
+
+In general: _auditing_, _role-based_ _access_, _immutability_
+
+Go language & stdlib::
+
+- functional programming
+- [[https://www.reddit.com/r/golang/comments/2jrwq1/immutability_on_go/][immutability]]
+
+Beyond stdlib:
+
+.link https://github.com/casbin/casbin] casbin/casbin (authz lib/ACL, RBAC, ABAC)
+
+* 7. Transport cost is zero
+
+In general: _cost_ _of_ _(un)marshalling_
+
+In Go stdlib:
+
+- [[https://golang.org/pkg/encoding][encoding/*]]
+- performance of `encoding/json.Marshal`? `pprof` it?
+
+Beyond stdlib:
+
+.link http://grpc.io/ gRPC
+
+* 8. The network is homogeneous
+
+In general: _interoperability_ _on_ _all_ _levels_
+
+In Go: broad & well-tested stdlib across different OS/archs
+
+Beyond stdlib:
+
 .link https://github.com/minio/minio-go minio/minio-go
-
-access the GitHub API:
 .link https://github.com/google/go-github google/go-github
-
-metrics:
 .link https://godoc.org/github.com/prometheus/client_golang/prometheus github.com/prometheus/client_golang/prometheus
 
 * Case studies
@@ -364,9 +388,28 @@ In [[https://www.youtube.com/watch?v=hWNwI5q01gI][The Challenges of Writing a Ma
   mitigate issues related to garbage collection and improved our use of channels to avoid deadlocks.
   We will also share creative techniques to integrate non-Go dependencies into the Go build process.
 
-* CockroachDB
+* CockroachDB: RPC clock offsets
 
-https://github.com/cockroachdb/cockroach/pull/5512
+Starting point is [[https://github.com/cockroachdb/cockroach/pull/5512][PR 5512]], addressing [[https://github.com/cockroachdb/cockroach/issues/3779][Issue 3779]], [[https://github.com/cockroachdb/cockroach/issues/4818][Issue 4818]], [[https://github.com/cockroachdb/cockroach/issues/4884][Issue 4884]], and [[https://github.com/cockroachdb/cockroach/issues/7887][Issue 7887]]:
+
+
+
+.image images/cockroachdb_pr5512.png _ 800
+
+* CockroachDB: RPC clock offsets (part 1/3)
+
+After some digging into PR 5512 we arrive at package [[http://godoc.org/github.com/cockroachdb/cockroach/pkg/rpc][github.com/cockroachdb/cockroach/pkg/rpc]], file [[https://github.com/cockroachdb/cockroach/blob/master/pkg/rpc/clock_offset.go][clock_offset.go]]:
+
+.code -numbers source/cockroach_clock_offset.go /\/\/ VerifyClockOffset calculates the number/,/healthyOffsetCount := 0/
+
+* CockroachDB: RPC clock offsets (part 2/3)
+
+.code -numbers source/cockroach_clock_offset.go /r.mu.Lock\(\)\n\t\t\/\/ Each measurement/,/r.mu.Unlock/
+
+* CockroachDB: RPC clock offsets (part 3/3)
+
+.code -numbers source/cockroach_clock_offset.go /mean, err /,/return nil\n}/
+
 
 * Minio
 
@@ -380,6 +423,7 @@ https://github.com/cockroachdb/cockroach/pull/5512
 - `gateway` for multi-cloud (Azure, GCS, S3) access
 
 : The gateway command is a recent addition, serving as S3 compatible proxy for different back-ends with support for full S3 API, incl. multi-part uploads
+: If you want to learn more about the gateway, tomorrow at 11am in Mile High Ballroom 1A Frank Wessels of Minio will give a deep dive
 
 * Minio: gateway (part 1/5)
 
@@ -404,9 +448,23 @@ In [[https://github.com/minio/minio/blob/master/cmd/gateway-main.go][cmd/gateway
 .code -numbers source/minio_gateway-main.go /\/\/ Prints the formatted startup message once object layer is initialized./,/handleSignals\(\)\n}/
 
 
-* Conclusions
+* Observations & further reading
 
-* Conclusions
+* Some observations
+
+- subjectively, the top three types of issues encountered were: *timeouts*, *DNS*, and *resource* *exhaustion*
+- `go` `doc` is awesome; high level of coverage; *right* *incentives* such as [[http://godoc.org][godoc.org]]
+- make it possible to *replicate* test and build *pipeline* *locally*
+- … and also, slightly controversial: [[https://medium.com/@mhausenblas/container-assisted-testing-b76ee74278b7][Container Assisted Testing]]
+
+* Some observations
+
+- Go is a great language for a team to build (complex) distributed systems
+- Discipline and a proper testbed are (still) necessary!
+- Any chance that we're gravitating towards a common lib for distributed Gomputing?
+- Last but not least: [[http://peter.bourgon.org/go-best-practices-2016/][Go best practices, six years in]] also applies
+
+* Further reading
 
 We see certain patterns emerging. See also [[http://shop.oreilly.com/product/0636920072768.do][Brendan Burns' book]]:
 
@@ -416,19 +474,11 @@ We see certain patterns emerging. See also [[http://shop.oreilly.com/product/063
 
 * Conclusions
 
-Some observations from the code reviews carried out in order to prepare this talk:
-
-- subjectively, the top three types of issues encountered were: *timeouts*, *DNS*, and *resource* *exhaustion*
-- `go` `doc` is awesome; high level of coverage; *right* *incentives* such as [[http://godoc.org][godoc.org]]
-- make it possible to *replicate* test and build *pipeline* *locally*
-- … and also, slightly controversial: [[https://medium.com/@mhausenblas/container-assisted-testing-b76ee74278b7][Container Assisted Testing]]
-
 * Conclusions
 
-- Go is a great language for a team to build (complex) distributed systems
-- Discipline and a proper testbed are (still) necessary!
-- Any chance that we're gravitating towards a common lib for distributed Gomputing?
-- Last but not least: [[http://peter.bourgon.org/go-best-practices-2016/][Go best practices, six years in]] also applies
+- Go is good for distributed systems
+- Go scales both human and machine
+- Be aware of the fallacies and how to avoid them
 
 * Questions? Comments?
 
